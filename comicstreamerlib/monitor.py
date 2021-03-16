@@ -230,7 +230,6 @@ class Monitor:
 
         self.library.addComics(comics)
 
-
     def createAddRemoveLists(self, dirs):
         ix = {}
         db_set = set()
@@ -293,6 +292,7 @@ class Monitor:
                         self.commitMetadataList(md_list)
                         md_list = []
             except Exception as e:
+                logging.error("unable to process file: {0}".format(filename))
                 logging.exception(e)
 
         if len(md_list) > 0:

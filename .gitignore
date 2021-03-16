@@ -18,3 +18,4 @@ test.py
 /libunrar/libunrar.so
 
 .idea
+venv
