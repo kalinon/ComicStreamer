@@ -24,6 +24,8 @@ For example `/comiclist?series=Batman - v6` will return only issues in Batman vo
 
 ### March 16 2021
 
+Modified endpoints to handle series as series-volume 
+
 ### March 2 2019
 
 - Ported to Python 3, since Python 2 will not be maintaned past 2020
