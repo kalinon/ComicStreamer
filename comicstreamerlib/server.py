@@ -772,7 +772,7 @@ class EntityAPIHandler(JSONResultAPIHandler):
                 _entities = []
                 for i in query.all():
                     val = i[0]
-                    if entity == 'series' and i[1] is not None and i[1] > 1:
+                    if entity == 'series' and i[1] is not None:
                         val = "{0} - v{1}".format(i[0], i[1])
                     # logging.info(val)
 

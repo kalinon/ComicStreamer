@@ -1,6 +1,28 @@
 # ComicStreamer
 
+## SPECIAL BRANCH: series-volume
+
+This branch modifies the `/entities/series` api call to return version specific series names. This is to compensate 
+for the lack of differentiation in reading apps like ChunkyReader. The series names will come back appended with " - vX"
+where X is the defined volume. Example:
+
+```json
+{
+  "series": [
+        "Batman - v6",
+        "Batman - v7",
+        "Batman - v8"
+  ]
+}
+```
+
+Also the `/comiclist` endpoint has been modified to accept series in this format to query for a series by volume. 
+For example `/comiclist?series=Batman - v6` will return only issues in Batman volume 6 while 
+`/comiclist?series=Batman` will still return all volumes of Batman.
+
 ## Work on this fork
+
+### March 16 2021
 
 ### March 2 2019
 
