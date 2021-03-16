@@ -39,6 +39,7 @@ import logging.handlers
 import imghdr
 import socket
 import webbrowser
+import re
 
 from comicapi.comicarchive import *
 
@@ -442,6 +443,15 @@ class ComicListAPIHandler(ZippableAPIHandler):
             'offset': self.get_argument(u"offset", default=None)
         }
 
+        if criteria['series'] is not None:
+            m = re.search('\s-\sv(\d+)', criteria[u"series"])
+            if m is not None:
+                volume = m.group(1)
+                criteria['volume'] = volume
+                criteria['series'] = re.sub('\s-\sv(\d+)', '', criteria['series'])
+
+        logging.info(criteria)
+
         resultset, total_results = self.library.list(criteria, paging)
 
         json_data = resultSetToJson(resultset, "comics", total_results)
@@ -687,7 +697,7 @@ class EntityAPIHandler(JSONResultAPIHandler):
             'generictags': GenericTag.name,
             'comics': Comic
         }
-        # logging.debug("In EntityAPIHandler {0}".format(arglist))
+        logging.info("In EntityAPIHandler {0}".format(arglist))
         # /entity1/filter1/entity2/filter2...
 
         # validate all entities keys in args
@@ -705,6 +715,8 @@ class EntityAPIHandler(JSONResultAPIHandler):
         # even number means listing entities
         if argcount % 2 == 0:
             name_list = [key for key in entities]
+            logging.info("In EntityAPIHandler names {0}".format(name_list))
+
             # (remove already-traversed entities)
             for e in arglist[0::2]:
                 try:
@@ -741,6 +753,8 @@ class EntityAPIHandler(JSONResultAPIHandler):
             entity = arglist[-1]  # the final entity in the list
             query = self.buildQuery(session, entities, arglist)
 
+            logging.info("query {0}".format(query))
+
             if entity == "comics":
 
                 query = self.processComicQueryArgs(query)
@@ -757,8 +771,13 @@ class EntityAPIHandler(JSONResultAPIHandler):
             else:
                 _entities = []
                 for i in query.all():
-                    if i[0] is not None and i[0] not in _entities:
-                        _entities.append(i[0])
+                    val = i[0]
+                    if entity == 'series' and i[1] is not None and i[1] > 1:
+                        val = "{0} - v{1}".format(i[0], i[1])
+                    # logging.info(val)
+
+                    if val is not None and val not in _entities:
+                        _entities.append(val)
 
                 resp = {entity: sorted(_entities)}
             self.application.dm.engine.echo = False
@@ -776,7 +795,13 @@ class EntityAPIHandler(JSONResultAPIHandler):
         querylist = []
 
         # To build up the query, bridge every entity to a comic table
-        querybase = session.query(entities[entity])
+
+        if entity == 'series':
+            querybase = session.query(entities[entity], entities["volumes"])
+        else:
+            querybase = session.query(entities[entity])
+
+        logging.debug("querybase {0}".format(querybase))
         if len(arglist) != 1:
             if entity == 'roles':
                 querybase = querybase.join(Credit).join(Comic)
