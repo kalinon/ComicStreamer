@@ -649,7 +649,7 @@ class ComicArchive:
         self.archive_type = self.ArchiveType.Unknown
         self.archiver = UnknownArchiver(self.path)
 
-        if ext == ".cbr" or ext == ".rar":
+        if ext == ".cbr" or ext == ".rar" or ext == ".zip":
             if self.rarTest():
                 self.archive_type = self.ArchiveType.Rar
                 self.archiver = RarArchiver(self.path, rar_exe_path=self.rar_exe_path)
@@ -747,7 +747,7 @@ class ComicArchive:
         try:
             # Do we even care about extensions??
             ext = os.path.splitext(self.path)[1].lower()
-            if ext == ".cbr" or ext == ".cbz":
+            if ext == ".cbr" or ext == ".cbz" or ext == ".zip":
                 # or self.isPdf()
                 if (self.isZip() or self.isRar()) and (self.getNumberOfPages() > 0):
                     return True
