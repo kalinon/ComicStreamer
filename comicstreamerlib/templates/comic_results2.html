@@ -51,7 +51,7 @@
                         month_names = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
                         str = month_names[comic.month-1] + " " + str;
                     }
-                                        
+
                     str = '(' + str + ')'
                     $(cd).find(".cd_date").text(str);
                 }
@@ -59,6 +59,11 @@
                 if (comic.title !== "") {
                     str = '"' + comic.title + '"';
                     $(cd).find(".cd_title").text(str);
+                }
+		if (comic.language !== "") {
+                    str = '"' + comic.language + '"';
+
+                    $(cd).find(".cd_language").text(str);
                 }
 
                 if (comic.volume !== "") {
@@ -102,6 +107,11 @@
             function myAttributeWriter(record)
             {
                 var val = record[this.id];
+                if (this.id == 'thumb_url')
+		{
+		    val = '<img src="{{handler.webroot}}/comic/'+ record.id +'/thumbnail?api_key={{api_key}}" />';
+
+		}
                 if (this.id == 'datex')
                 {
 		    if (record['day'] != "" && record['month'] != "" && record['year'] != "")
@@ -261,13 +271,8 @@
             <table id="resultset" >
                 <thead>
                     <tr>
-                        <th data-dynatable-column="series">Series</th>
-                        <th>Volume</th>
-                        <th >Issue</th>
-                        <th data-dynatable-sorts="date" data-dynatable-column="datex">Date</th>
-                        <th>Title</th>
-                        <th>Publisher</th>
-                        <th data-dynatable-column="path">Server Path</th>
+                        <th data-dynatable-column="thumb_url"></th>
+                        <th data-dynatable-column="series">Title</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -328,4 +333,3 @@
 
     </body>
 </html>
-
